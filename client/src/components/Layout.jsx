@@ -9,7 +9,6 @@ import GlobalSearch from './GlobalSearch';
 const pageTitles = {
   '/': 'Dashboard',
   '/tasks': 'All Tasks',
-  '/my-tasks': 'My Tasks',
   '/grid': 'Grid View',
   '/kanban': 'Kanban Board',
   '/sections': 'Section View',

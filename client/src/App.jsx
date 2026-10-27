@@ -8,7 +8,6 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import AllTasksPage from './pages/AllTasksPage';
-import MyTasksPage from './pages/MyTasksPage';
 import GridViewPage from './pages/GridViewPage';
 import KanbanPage from './pages/KanbanPage';
 import SectionViewPage from './pages/SectionViewPage';
@@ -67,7 +66,7 @@ export default function App() {
         }>
           <Route index element={<DashboardPage />} />
           <Route path="tasks" element={<AllTasksPage />} />
-          <Route path="my-tasks" element={<MyTasksPage />} />
+          <Route path="my-tasks" element={<Navigate to="/tasks" replace />} />
           <Route path="grid" element={<GridViewPage />} />
           <Route path="kanban" element={<KanbanPage />} />
           <Route path="sections" element={<SectionViewPage />} />

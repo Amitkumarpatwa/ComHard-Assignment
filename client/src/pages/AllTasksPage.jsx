@@ -96,15 +96,15 @@ export default function AllTasksPage() {
           <table className="recent-tasks-table">
             <thead>
               <tr>
-                <th>Task</th>
-                <th>Assignee</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>To Do Period</th>
-                <th>In Progress Period</th>
-                <th>Total SLA Elapsed</th>
-                <th>SLA Status</th>
-                <th>Actions</th>
+                <th style={{ minWidth: '180px' }}>Task</th>
+                <th style={{ minWidth: '140px' }}>Assignee</th>
+                <th style={{ minWidth: '120px' }}>Status</th>
+                <th style={{ minWidth: '90px' }}>Priority</th>
+                <th style={{ minWidth: '110px', whiteSpace: 'nowrap' }}>To Do Period</th>
+                <th style={{ minWidth: '120px', whiteSpace: 'nowrap' }}>In Progress Period</th>
+                <th style={{ minWidth: '130px', whiteSpace: 'nowrap' }}>Total SLA Elapsed</th>
+                <th style={{ minWidth: '120px', whiteSpace: 'nowrap' }}>SLA Status</th>
+                <th style={{ minWidth: '80px', textAlign: 'right', whiteSpace: 'nowrap' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -140,7 +140,7 @@ function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
 
   return (
     <tr>
-      <td style={{ fontWeight: 600 }}>
+      <td style={{ fontWeight: 600, minWidth: '180px' }}>
         <div>{task.title}</div>
         {task.description && (
           <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -148,26 +148,35 @@ function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
           </div>
         )}
       </td>
-      <td>
+      <td style={{ minWidth: '140px' }}>
         <div>{task.assigneeName}</div>
-        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>{task.assigneeEmail}</div>
+        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{task.assigneeEmail}</div>
       </td>
-      <td>
+      <td style={{ minWidth: '120px' }}>
         <select
           className="form-select"
           value={task.status}
           onChange={(e) => onStatusChange(task._id, e.target.value)}
-          style={{ padding: '4px 24px 4px 8px', fontSize: 'var(--font-size-xs)', minWidth: 'auto' }}
+          style={{
+            padding: '4px 24px 4px 10px',
+            fontSize: 'var(--font-size-xs)',
+            minWidth: '110px',
+            width: '110px',
+            fontWeight: 600,
+            borderRadius: 'var(--radius-full)'
+          }}
         >
           <option value="TODO">To Do</option>
           <option value="IN_PROGRESS">In Progress</option>
           <option value="DONE">Done</option>
         </select>
       </td>
-      <td><span className={`badge ${getPriorityClass(task.priority)}`}>{task.priority}</span></td>
+      <td style={{ minWidth: '90px' }}>
+        <span className={`badge ${getPriorityClass(task.priority)}`}>{task.priority}</span>
+      </td>
 
       {/* To Do Stage Duration */}
-      <td>
+      <td style={{ minWidth: '110px', whiteSpace: 'nowrap' }}>
         <div style={{ fontWeight: 600, color: task.status === 'TODO' ? 'var(--color-primary)' : 'var(--color-text)' }}>
           {formatDuration(sla.todoDuration)}
           {task.status === 'TODO' && <span style={{ color: 'var(--color-primary)', marginLeft: '4px' }} title="Ticking live">●</span>}
@@ -178,7 +187,7 @@ function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
       </td>
 
       {/* In Progress Stage Duration */}
-      <td>
+      <td style={{ minWidth: '120px', whiteSpace: 'nowrap' }}>
         <div style={{ fontWeight: 600, color: task.status === 'IN_PROGRESS' ? 'var(--color-warning)' : 'var(--color-text)' }}>
           {formatDuration(sla.inProgressDuration)}
           {task.status === 'IN_PROGRESS' && <span style={{ color: 'var(--color-warning)', marginLeft: '4px' }} title="Ticking live">●</span>}
@@ -189,21 +198,21 @@ function TaskRow({ task, onEdit, onDelete, onStatusChange }) {
       </td>
 
       {/* Total SLA Elapsed (both periods combined) */}
-      <td>
+      <td style={{ minWidth: '130px', whiteSpace: 'nowrap' }}>
         <div style={{ fontWeight: 700 }}>{formatDuration(sla.totalElapsed)}</div>
         <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>Target: {task.slaMinutes}m</div>
       </td>
 
       {/* SLA Status & Remaining */}
-      <td>
+      <td style={{ minWidth: '120px', whiteSpace: 'nowrap' }}>
         <span className={`badge ${sla.isOverdue ? 'overdue' : 'on-track'}`}>
           {sla.isOverdue ? `Overdue (${formatDuration(sla.overdueBy)})` : `${formatDuration(sla.remaining)} left`}
         </span>
       </td>
 
       {/* Actions */}
-      <td>
-        <div style={{ display: 'flex', gap: '4px' }}>
+      <td style={{ minWidth: '80px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
           <button className="btn btn-ghost btn-sm" onClick={() => onEdit(task)} title="Edit">
             <Pencil size={14} />
           </button>

@@ -20,7 +20,6 @@ export default function Sidebar({ user, onLogout }) {
   const navItems = [
     { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
     { label: 'All Tasks', path: '/tasks', icon: <ListTodo size={20} /> },
-    { label: 'My Tasks', path: '/my-tasks', icon: <User size={20} /> },
   ];
 
   const viewItems = [

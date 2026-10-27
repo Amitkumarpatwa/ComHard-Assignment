@@ -314,6 +314,9 @@ ul, ol { list-style: none; }
 .app-layout {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* --- Sidebar --- */
@@ -476,8 +479,12 @@ ul, ol { list-style: none; }
   flex: 1;
   margin-left: var(--sidebar-width);
   min-height: 100vh;
+  min-width: 0;
+  max-width: calc(100vw - var(--sidebar-width));
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* --- Top bar --- */
@@ -546,7 +553,10 @@ ul, ol { list-style: none; }
 /* --- Page content --- */
 .page-content {
   flex: 1;
-  padding: var(--space-8);
+  padding: var(--space-6) var(--space-8);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* --- Stats Cards --- */
@@ -1033,22 +1043,26 @@ ul, ol { list-style: none; }
   gap: var(--space-3);
   align-items: center;
   margin-bottom: var(--space-6);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-4);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 }
 
 .filters-bar .form-select,
 .filters-bar .form-input {
   width: auto;
-  min-width: 140px;
-  padding: var(--space-2) var(--space-3);
+  min-width: 110px;
+  padding: 8px 12px;
   font-size: var(--font-size-sm);
+  box-sizing: border-box;
 }
 
 .filters-bar .form-select {
-  padding-right: 32px;
+  padding-right: 28px;
 }
 
 /* --- Empty & Loading states --- */
@@ -1193,14 +1207,17 @@ ul, ol { list-style: none; }
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
 }
 
 .recent-tasks-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-5);
+  padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -1211,24 +1228,27 @@ ul, ol { list-style: none; }
 
 .recent-tasks-table {
   width: 100%;
+  min-width: 880px;
   border-collapse: collapse;
 }
 
 .recent-tasks-table th {
   text-align: left;
-  padding: var(--space-3) var(--space-5);
+  padding: 10px 14px;
   font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
 }
 
 .recent-tasks-table td {
-  padding: var(--space-3) var(--space-5);
+  padding: 10px 14px;
   font-size: var(--font-size-sm);
   border-bottom: 1px solid var(--color-border-light);
+  vertical-align: middle;
 }
 
 .recent-tasks-table tr:last-child td {

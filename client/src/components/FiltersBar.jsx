@@ -133,7 +133,11 @@ export default function FiltersBar({
 
       {/* Create Task Button */}
       {onCreateClick && (
-        <button className="btn btn-primary" onClick={onCreateClick}>
+        <button
+          className="btn btn-primary"
+          onClick={onCreateClick}
+          style={{ marginLeft: 'auto', whiteSpace: 'nowrap', flexShrink: 0 }}
+        >
           <Plus size={18} /> New Task
         </button>
       )}
