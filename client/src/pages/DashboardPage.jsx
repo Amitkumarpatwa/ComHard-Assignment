@@ -48,7 +48,7 @@ export default function DashboardPage() {
     { label: 'In Progress', value: a.inProgressCount, icon: <Timer size={22} />, variant: 'progress' },
     { label: 'Completed', value: a.doneCount, icon: <CheckCircle2 size={22} />, variant: 'done' },
     { label: 'Overdue', value: a.overdueCount, icon: <AlertTriangle size={22} />, variant: 'danger' },
-    { label: 'Avg Elapsed', value: formatDuration(a.averageElapsedSeconds), icon: <TrendingUp size={22} />, variant: 'info' },
+    { label: 'Avg SLA', value: formatDuration(a.averageSlaSeconds ?? a.averageElapsedSeconds), icon: <TrendingUp size={22} />, variant: 'info', sublabel: '(Todo + In Progress) / N' },
     { label: 'SLA Compliance', value: `${a.slaCompliancePercentage}%`, icon: <Percent size={22} />, variant: 'warning' },
   ];
 
@@ -61,6 +61,11 @@ export default function DashboardPage() {
             <div className="stat-card-icon">{card.icon}</div>
             <div className="stat-card-value">{card.value}</div>
             <div className="stat-card-label">{card.label}</div>
+            {card.sublabel && (
+              <div style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
+                {card.sublabel}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -69,6 +74,12 @@ export default function DashboardPage() {
       <div className="analytics-grid" style={{ marginBottom: 'var(--space-8)' }}>
         <div className="analytics-card">
           <h3>📊 SLA Summary</h3>
+          <div className="analytics-metric">
+            <span className="analytics-metric-label">Avg SLA (Todo + Progress)</span>
+            <span className="analytics-metric-value" style={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+              {formatDuration(a.averageSlaSeconds ?? a.averageElapsedSeconds)}
+            </span>
+          </div>
           <div className="analytics-metric">
             <span className="analytics-metric-label">Completed Tasks</span>
             <span className="analytics-metric-value">{a.completedCount}</span>

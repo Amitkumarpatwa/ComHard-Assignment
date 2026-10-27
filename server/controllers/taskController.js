@@ -146,46 +146,62 @@ const getAnalytics = async (req, res) => {
     const inProgressTasks = tasks.filter(t => t.status === 'IN_PROGRESS');
     const doneTasks = tasks.filter(t => t.status === 'DONE');
 
-    // Calculate elapsed time for all tasks
+    // Calculate SLA for all tasks using:
+    // sla_i = todo timer + inprogress timer
+    // avg SLA = (sla_1 + sla_2 + ... + sla_N) / N
     const now = new Date();
     let overdueCount = 0;
-    let totalElapsedAll = 0;
+    let totalSlaSum = 0;
+
+    const calculateTaskSla = (task) => {
+      const currentLive = (task.status !== 'DONE' && task.currentStageStartedAt)
+        ? Math.max(0, Math.floor((now.getTime() - new Date(task.currentStageStartedAt).getTime()) / 1000))
+        : 0;
+
+      const todoTimer = (task.stageTimeSeconds?.TODO || 0) + (task.status === 'TODO' ? currentLive : 0);
+      const inProgressTimer = (task.stageTimeSeconds?.IN_PROGRESS || 0) + (task.status === 'IN_PROGRESS' ? currentLive : 0);
+      const taskSla = todoTimer + inProgressTimer;
+
+      return { todoTimer, inProgressTimer, taskSla };
+    };
 
     tasks.forEach(task => {
-      const elapsed = task.getTotalElapsedSeconds();
-      totalElapsedAll += elapsed;
-      if (elapsed > task.slaMinutes * 60) {
+      const { taskSla } = calculateTaskSla(task);
+      totalSlaSum += taskSla;
+      if (taskSla > (task.slaMinutes || 25) * 60) {
         overdueCount++;
       }
     });
 
+    const avgSlaAll = total > 0 ? Math.round(totalSlaSum / total) : 0;
+
     // Completed task metrics
     const completedTasks = doneTasks;
-    let avgElapsedCompleted = 0;
+    let avgSlaCompleted = 0;
     let avgSlaUtilization = 0;
     let slaCompliantCount = 0;
     let avgStageDurations = { TODO: 0, IN_PROGRESS: 0, DONE: 0 };
 
     if (completedTasks.length > 0) {
-      let totalElapsedCompleted = 0;
+      let totalSlaCompleted = 0;
       let totalUtilization = 0;
 
       completedTasks.forEach(task => {
-        const elapsed = task.getTotalElapsedSeconds();
-        const slaLimit = task.slaMinutes * 60;
-        totalElapsedCompleted += elapsed;
-        totalUtilization += slaLimit > 0 ? (elapsed / slaLimit) * 100 : 0;
+        const { todoTimer, inProgressTimer, taskSla } = calculateTaskSla(task);
+        const slaLimit = (task.slaMinutes || 25) * 60;
+        totalSlaCompleted += taskSla;
+        totalUtilization += slaLimit > 0 ? (taskSla / slaLimit) * 100 : 0;
 
-        if (elapsed <= slaLimit) {
+        if (taskSla <= slaLimit) {
           slaCompliantCount++;
         }
 
-        avgStageDurations.TODO += task.stageTimeSeconds.TODO || 0;
-        avgStageDurations.IN_PROGRESS += task.stageTimeSeconds.IN_PROGRESS || 0;
-        avgStageDurations.DONE += task.stageTimeSeconds.DONE || 0;
+        avgStageDurations.TODO += todoTimer;
+        avgStageDurations.IN_PROGRESS += inProgressTimer;
+        avgStageDurations.DONE += (task.stageTimeSeconds?.DONE || 0);
       });
 
-      avgElapsedCompleted = Math.round(totalElapsedCompleted / completedTasks.length);
+      avgSlaCompleted = Math.round(totalSlaCompleted / completedTasks.length);
       avgSlaUtilization = Math.round((totalUtilization / completedTasks.length) * 100) / 100;
       avgStageDurations.TODO = Math.round(avgStageDurations.TODO / completedTasks.length);
       avgStageDurations.IN_PROGRESS = Math.round(avgStageDurations.IN_PROGRESS / completedTasks.length);
@@ -196,8 +212,6 @@ const getAnalytics = async (req, res) => {
       ? Math.round((slaCompliantCount / completedTasks.length) * 10000) / 100
       : 0;
 
-    const avgElapsedAll = total > 0 ? Math.round(totalElapsedAll / total) : 0;
-
     res.status(200).json({
       success: true,
       analytics: {
@@ -206,8 +220,10 @@ const getAnalytics = async (req, res) => {
         inProgressCount: inProgressTasks.length,
         doneCount: doneTasks.length,
         overdueCount,
-        averageElapsedSeconds: avgElapsedAll,
-        averageElapsedCompletedSeconds: avgElapsedCompleted,
+        averageSlaSeconds: avgSlaAll,
+        averageElapsedSeconds: avgSlaAll, // alias for backwards compatibility
+        averageSlaCompletedSeconds: avgSlaCompleted,
+        averageElapsedCompletedSeconds: avgSlaCompleted,
         averageSlaUtilization: avgSlaUtilization,
         slaCompliancePercentage,
         slaCompliantCount,

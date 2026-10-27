@@ -100,12 +100,16 @@ export default function AnalyticsPage() {
         <div className="analytics-card">
           <h3>⏱ Time Metrics</h3>
           <div className="analytics-metric">
-            <span className="analytics-metric-label">Avg Elapsed (All)</span>
-            <span className="analytics-metric-value">{formatDuration(a.averageElapsedSeconds)}</span>
+            <span className="analytics-metric-label">Avg SLA (Todo + Progress)</span>
+            <span className="analytics-metric-value" style={{ fontWeight: 700 }}>
+              {formatDuration(a.averageSlaSeconds ?? a.averageElapsedSeconds)}
+            </span>
           </div>
           <div className="analytics-metric">
-            <span className="analytics-metric-label">Avg Elapsed (Completed)</span>
-            <span className="analytics-metric-value">{formatDuration(a.averageElapsedCompletedSeconds)}</span>
+            <span className="analytics-metric-label">Avg SLA (Completed Tasks)</span>
+            <span className="analytics-metric-value">
+              {formatDuration(a.averageSlaCompletedSeconds ?? a.averageElapsedCompletedSeconds)}
+            </span>
           </div>
           <div className="analytics-metric">
             <span className="analytics-metric-label">Total Completed</span>
